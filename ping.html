@@ -1,0 +1,106 @@
+<head>
+    <script src="./ping.js"></script>
+    <script>
+    var do_ping = function() {
+        ping(document.getElementById('pingurl').value).then(function(delta) {
+            document.getElementById('ms').innerText = document.getElementById('ms').innerText + delta + "\r\n";
+            // document.write(delta);
+        }).catch(function(error) {
+            console.log(String(error));
+        });
+    };
+
+    function ping2(ip){
+        var img = new Image();
+        var start = new Date().getTime();
+        var end;
+        var delta;
+        img.src = "http://" + ip + ":20177?t=" + start;
+        var flag = false;  //无法访问
+        img.onload = function(){
+            end = new Date().getTime();
+            delta = end - start;
+            flag = true;
+            console.log(ip + 'ok' + delta);
+        };
+        img.onerror = function(){
+            end = new Date().getTime();
+            delta = end - start;
+            flag = true;
+            console.log(ip + 'ok' + delta);
+        };
+        var timer = setTimeout(function(){
+            if(!flag){    //如果真的无法访问
+                flag = false;
+                console.log('failed');
+            }
+        },1500);
+    }
+    // ping2('192.168.1.1')
+    // ping2('hl.com')
+    // ping2('kaige.org')
+    // ping2('us1')
+    // ping2('us2')
+    // ping2('us3')
+    // ping2('spg1')
+    </script>
+
+    <script type="text/javascript">
+// console.log('rtt');
+//         function test(ip) {
+//             var ts, rtt, img = new Image;
+//             img.onload = function () {
+//                 rtt = +new Date - ts;
+//                 console.log(rtt);
+//             }
+//             img.onerror = function () {
+//                 rtt = +new Date - ts;
+//                 console.log(rtt);
+//             }
+//             ts = +new Date;
+//             img.src = 'http://' + ip + '/?r=' + Math.random();
+//         }
+
+//         test('kaige.org');
+    </script>
+
+
+    <script type="text/javascript">
+        
+        function tcprtt(ip) {
+            var t = [], n = 2, tcp, rtt;
+
+            var ld = function() {
+                t.push(+new Date);
+
+                if(t.length > n) {
+                    done();
+                } else {
+                    var img = new Image;
+                    img.onload = ld;
+                    img.onerror = ld;
+                    img.src = 'http://' + ip + '/?' + Math.random() + '=0';
+                }
+            }
+
+            var done = function() {
+                rtt = t[2] - t[1];
+                tcp = t[1] - t[0] - rtt;
+
+                console.log('rtt: ' + rtt + ' tcp: ' + tcp);
+            }
+
+            ld();
+        }
+
+        // tcprtt('kaige.org');
+        tcprtt('us1:20181');
+    </script>
+</head>
+<body>
+    <input id='pingurl' type='text' value='http://kaige.org'></input>
+    <button onclick='do_ping()'>Ping</button>
+    <br>
+
+    <textarea id='ms'></textarea>
+</body>
